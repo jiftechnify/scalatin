@@ -17,3 +17,6 @@ project/plugins/project/
 .lib/
 
 .idea/
+
+.bloop/
+.metals/
