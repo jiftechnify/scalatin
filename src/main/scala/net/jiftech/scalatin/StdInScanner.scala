@@ -36,41 +36,57 @@ object StdInScanner {
   def unit: StdInScanner[Unit] = StdInScanner(())
 
   /* read single line -> produce single value */
-  // read a line
-  def readALine: StdInScanner[String] = StdInScanner(s => s.readLine().trim)
-  // read a line as Int
-  def readAnInt: StdInScanner[Int] = StdInScanner(s => s.readInt())
-  // read a line as BigInt
-  def readABigInt: StdInScanner[BigInt] = readALine.map(BigInt(_))
+  // read single line
+  def readLine: StdInScanner[String] = StdInScanner(s => s.readLine().trim)
+  
+  // read single line as Int
+  def readInt: StdInScanner[Int] = StdInScanner(s => s.readInt())
 
-  def readAPair[A, B](fa: String => A, fb: String => B): StdInScanner[(A, B)] =
+  // read single line as Long
+  def readLong: StdInScanner[Long] = StdInScanner(s => s.readLong())
+
+  // read single line as BigInt
+  def readABigInt: StdInScanner[BigInt] = readLine.map(BigInt(_))
+
+  // read single line as a pair of values
+  def readPair[A, B](fa: String => A, fb: String => B): StdInScanner[(A, B)] =
     readTokens.map(v => (fa(v(0)), fb(v(1))))
 
-  def readIntPair: StdInScanner[(Int, Int)] =
-    readAPair(_.toInt, _.toInt)
+  def readStringPair: StdInScanner[(String, String)] =
+    readPair(identity, identity)
 
-  def readATriple[A, B, C](fa: String => A, fb: String => B, fc: String => C): StdInScanner[(A, B, C)] =
+  def readIntPair: StdInScanner[(Int, Int)] =
+    readPair(_.toInt, _.toInt)
+
+  def readLongPair: StdInScanner[(Long, Long)] =
+    readPair(_.toLong, _.toLong)
+
+  // read single line as a triple of values
+  def readTriple[A, B, C](fa: String => A, fb: String => B, fc: String => C): StdInScanner[(A, B, C)] =
     readTokens.map(v => (fa(v(0)), fb(v(1)), fc(v(2))))
 
+  def readStringTriple: StdInScanner[(String, String, String)] =
+    readTriple(identity, identity, identity)
+
   def readIntTriple: StdInScanner[(Int, Int, Int)] =
-    readATriple(_.toInt, _.toInt, _.toInt)
+    readTriple(_.toInt, _.toInt, _.toInt)
 
-  def readTwoPairs[A, B](fa: String => A, fb: String => B): StdInScanner[((A, B), (A, B))] =
-    readTokens.map(v => ((fa(v(0)), fb(v(1))), (fa(v(2)), fb(v(3)))))
-
-  def readTwoIntPairs: StdInScanner[((Int, Int), (Int, Int))] =
-    readTwoPairs(_.toInt, _.toInt)
+  def readLongTriple: StdInScanner[(Long, Long, Long)] =
+    readTriple(_.toLong, _.toLong, _.toLong)
 
   /* read single line -> produce multiple values */
   // read tokens from a line, then map them with "f"
   def readTokensWithMap[A](f: String => A): StdInScanner[Vector[A]] =
-    readALine.map(_.split(" ").toVector.map(f))
+    readLine.map(_.split(" ").toVector.map(f))
 
   def readTokens: StdInScanner[Vector[String]] =
     readTokensWithMap(identity)
 
   def readIntTokens: StdInScanner[Vector[Int]] =
     readTokensWithMap(_.toInt)
+
+  def readLongTokens: StdInScanner[Vector[Long]] =
+    readTokensWithMap(_.toLong)
 
   def readBigIntTokens: StdInScanner[Vector[BigInt]] =
     readTokensWithMap(BigInt(_))
@@ -84,6 +100,9 @@ object StdInScanner {
 
   def readInts(n: Int): StdInScanner[Vector[Int]] =
     StdInScanner(s => Vector.fill(n)(s.readInt()))
+
+  def readLongs(n: Int): StdInScanner[Vector[Long]] =
+    StdInScanner(s => Vector.fill(n)(s.readLong()))
 
   def readBigInts(n: Int): StdInScanner[Vector[BigInt]] =
     StdInScanner(s => Vector.fill(n)(BigInt(s.readLine())))
@@ -106,20 +125,21 @@ object StdInScanner {
     readTriples(n)(_.toInt, _.toInt, _.toInt)
 
   /* read multiple lines -> produce multiple value per line */
-  // "2D Matrix of A" is Vector of "Vector of A"
   type Matrix[A] = Vector[Vector[A]]
 
-  // read a table of "rows", then map each elements with "f"
-  def readTableWithMap[A: ClassTag](rows: Int, f: String => A): StdInScanner[Matrix[A]] =
-    readLines(rows).map{ lns =>
-      lns.map(ln => ln.split(" ").toVector.map(tkn => f(tkn)))
+  def readMatrixWithMap[A: ClassTag](nRows: Int, f: String => A): StdInScanner[Matrix[A]] =
+    readLines(nRows).map{ lns =>
+      lns.map(ln => ln.split(" ").toVector.map(tk => f(tk)))
     }
-  def readTable(rows: Int): StdInScanner[Matrix[String]] =
-    readTableWithMap(rows, identity)
+  def readMatrix(rows: Int): StdInScanner[Matrix[String]] =
+    readMatrixWithMap(rows, identity)
 
   def readIntMatrix(rows: Int): StdInScanner[Matrix[Int]] =
-    readTableWithMap(rows, _.toInt)
+    readMatrixWithMap(rows, _.toInt)
+
+  def readLongMatrix(rows: Int): StdInScanner[Matrix[Long]] =
+    readMatrixWithMap(rows, _.toLong)
 
   def readBigIntMatrix(rows: Int): StdInScanner[Matrix[BigInt]] =
-    readTableWithMap(rows, BigInt(_))
+    readMatrixWithMap(rows, BigInt(_))
 }
