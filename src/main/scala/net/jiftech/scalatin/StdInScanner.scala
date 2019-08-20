@@ -16,6 +16,9 @@ case class StdInScanner[A](scan: StdIn.type => A) {
   def flatMap[B](f: A => StdInScanner[B]): StdInScanner[B] =
     StdInScanner(in => f(scan(in)).scan(in))
 
+  // dummy implementation. this enables pattern matching in for-comprehensions 
+  def withFilter(f: A => Boolean): StdInScanner[A] = this
+
   // run entire scanner and get result
   def run: A = scan(StdIn)
 
