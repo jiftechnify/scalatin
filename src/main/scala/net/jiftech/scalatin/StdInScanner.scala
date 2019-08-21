@@ -49,7 +49,7 @@ object StdInScanner {
   def readLong: StdInScanner[Long] = StdInScanner(s => s.readLong())
 
   // read single line as BigInt
-  def readABigInt: StdInScanner[BigInt] = readLine.map(BigInt(_))
+  def readBigInt: StdInScanner[BigInt] = readLine.map(BigInt(_))
 
   // read single line as a pair of values
   def readPair[A, B](fa: String => A, fb: String => B): StdInScanner[(A, B)] =
