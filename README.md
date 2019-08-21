@@ -24,6 +24,12 @@ val (sum, s) = scanner.run
 // s = "test"
 ```
 
+## Usage
+- In code submission, copy/paste library code block indicated by comment.
+- For testing, `StdInScannerSyntaxForTesting` might be useful. It adds some extension methods to `StdInScanner` that enable to run scanner on stub input(file or string litral).
+  + `#runOnFile(filename)`: run scanner on the specified file.
+  + `#runOnString(str)`: run scanner on the supplied string. 
+
 ## List of All Scanners
 ### Pure scanners(read nothing)
 - `StdinScanner.of[A](a: A)`: Always emit constant `a`. Read nothing from input.

@@ -1,11 +1,7 @@
 package net.jiftech.scalatin
 
-import java.io.StringReader
-import java.nio.file.{Files, Paths}
-
+/* copy/paste from here... */
 import scala.io.StdIn
-import scala.language.higherKinds
-import scala.reflect.ClassTag
 
 case class StdInScanner[A](scan: StdIn.type => A) {
   // transform read result by "f"
@@ -21,14 +17,6 @@ case class StdInScanner[A](scan: StdIn.type => A) {
 
   // run entire scanner and get result
   def run: A = scan(StdIn)
-
-  // run entire scanner on the text file
-  def runOnFile(filename: String): A =
-    Console.withIn(Files.newBufferedReader(Paths.get(filename)))(this.scan(StdIn))
-
-  // run entire scanner on the String
-  def runOnString(str: String): A =
-    Console.withIn(new StringReader(str))(this.scan(StdIn))
 }
 
 object StdInScanner {
@@ -130,19 +118,36 @@ object StdInScanner {
   /* read multiple lines -> produce multiple value per line */
   type Matrix[A] = Vector[Vector[A]]
 
-  def readMatrixWithMap[A: ClassTag](nRows: Int, f: String => A): StdInScanner[Matrix[A]] =
+  def readMatrixWithMap[A](nRows: Int, f: String => A): StdInScanner[Matrix[A]] =
     readLines(nRows).map{ lns =>
       lns.map(ln => ln.split(" ").toVector.map(tk => f(tk)))
     }
-  def readMatrix(rows: Int): StdInScanner[Matrix[String]] =
-    readMatrixWithMap(rows, identity)
+  def readMatrix(nRows: Int): StdInScanner[Matrix[String]] =
+    readMatrixWithMap(nRows, identity)
 
-  def readIntMatrix(rows: Int): StdInScanner[Matrix[Int]] =
-    readMatrixWithMap(rows, _.toInt)
+  def readIntMatrix(nRows: Int): StdInScanner[Matrix[Int]] =
+    readMatrixWithMap(nRows, _.toInt)
 
-  def readLongMatrix(rows: Int): StdInScanner[Matrix[Long]] =
-    readMatrixWithMap(rows, _.toLong)
+  def readLongMatrix(nRows: Int): StdInScanner[Matrix[Long]] =
+    readMatrixWithMap(nRows, _.toLong)
 
-  def readBigIntMatrix(rows: Int): StdInScanner[Matrix[BigInt]] =
-    readMatrixWithMap(rows, BigInt(_))
+  def readBigIntMatrix(nRows: Int): StdInScanner[Matrix[BigInt]] =
+    readMatrixWithMap(nRows, BigInt(_))
+}
+/* ... to here */
+
+// extension methods of StdInScanner, enables to run scanner on stub input. useful for testing.
+object StdInScannerSyntaxForTesting {
+  implicit class StdInScannerOps[A](private val sc: StdInScanner[A]) extends AnyVal {
+    import java.io.StringReader
+    import java.nio.file.{Files, Paths}
+
+    // run entire scanner on the text file
+    def runOnFile(filename: String): A =
+    Console.withIn(Files.newBufferedReader(Paths.get(filename)))(sc.scan(StdIn))
+
+    // run entire scanner on the String
+    def runOnString(str: String): A =
+    Console.withIn(new StringReader(str))(sc.scan(StdIn))
+  }
 }

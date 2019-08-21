@@ -1,6 +1,7 @@
 package net.jiftech.scalatin
 
 import org.scalatest._
+import StdInScannerSyntaxForTesting._
 
 class StdInScannerSpec extends FlatSpec {
   "StdInScanner.of" should "emit applied value" in {
