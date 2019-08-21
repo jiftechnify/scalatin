@@ -3,8 +3,8 @@ package net.jiftech.scalatin
 import org.scalatest._
 
 class StdInScannerSpec extends FlatSpec {
-  "#apply" should "emit applied value" in {
-    val scanner = StdInScanner(true)
+  "StdInScanner.of" should "emit applied value" in {
+    val scanner = StdInScanner.of(true)
     val res = scanner.run
     assert(res == true)
   }
@@ -122,8 +122,7 @@ class StdInScannerSpec extends FlatSpec {
   "StdInScanner" should "be composable in for-comprehensions" in {
     import StdInScanner._
 
-    val in = 
-    """
+    val in = """
     |2 3
     |100
     |200
@@ -133,7 +132,7 @@ class StdInScannerSpec extends FlatSpec {
     """.trim.stripMargin
 
     val scanner = for {
-      c      <- StdInScanner(100)
+      c      <- StdInScanner.of(100)
       (m, n) <- readIntPair
       a      <- readInts(m)
       b      <- readIntPairs(n)

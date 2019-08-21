@@ -34,9 +34,9 @@ case class StdInScanner[A](scan: StdIn.type => A) {
 object StdInScanner {
   /* pure(read nothing) scanners */
   // read nothing, and return specified "a"
-  def apply[A](a: A): StdInScanner[A] = StdInScanner(_ => a)
+  def of[A](a: A): StdInScanner[A] = StdInScanner(_ => a)
   // read nothing, and return ()
-  def unit: StdInScanner[Unit] = StdInScanner(())
+  def unit: StdInScanner[Unit] = StdInScanner.of(())
 
   /* read single line -> produce single value */
   // read single line
