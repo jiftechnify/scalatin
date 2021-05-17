@@ -1,9 +1,9 @@
 package net.jiftech.scalatin
 
-import org.scalatest._
-import StdInScannerSyntaxForTesting._
+import org.scalatest.flatspec.*
+import StdInScannerSyntaxForTesting.*
 
-class StdInScannerSpec extends FlatSpec {
+class StdInScannerSpec extends AnyFlatSpec {
   "StdInScanner.of" should "emit applied value" in {
     val scanner = StdInScanner.of(true)
     val res = scanner.run
