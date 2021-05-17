@@ -1,8 +1,15 @@
-name := "scalatin"
+val scala3Version = "3.0.0-RC2"
 
-version := "0.1"
+lazy val root = project
+  .in(file("."))
+  .settings(
+    name := "scalatin",
+    version := "0.1.0",
 
-scalaVersion := "2.11.12"
+    scalaVersion := scala3Version,
 
-libraryDependencies += "org.scalactic" %% "scalactic" % "3.0.8"
-libraryDependencies += "org.scalatest" %% "scalatest" % "3.0.8" % "test"
+    libraryDependencies ++= Seq(
+      "org.scalactic" %% "scalactic" % "3.2.7",
+      "org.scalatest" %% "scalatest" % "3.2.7" % "test"
+    )
+  )
