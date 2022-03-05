@@ -12,7 +12,10 @@ trait FromStr[T] {
 
 object FromStr {
   extension (s: String) {
-    def parse[T: FromStr] = summon[FromStr[T]].parse(s)
+
+    /** Enable `val a: A = "str".parse` syntax when `A: FromStr`.
+      */
+    def parse[T](using fs: FromStr[T]) = fs.parse(s)
   }
 
   given FromStr[String] with {
@@ -92,6 +95,7 @@ object HasIterFactory {
   given HasIterFactory[Iterator] with {
     def apply() = Iterator
   }
+  
   given HasIterFactory[Vector] with {
     def apply() = Vector
   }
@@ -222,7 +226,6 @@ case class StdInScanner[A](scan: StdIn.type => A) {
   * build a scanner for structured text.
   */
 object StdInScanner {
-  import scala.collection.IterableFactory
   import FromStr.parse
 
   // read nothing, and return specified "a"
