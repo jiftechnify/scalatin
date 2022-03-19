@@ -1,16 +1,12 @@
 package net.jiftech.scalatin
 
-import org.scalactic.TolerantNumerics
-import org.scalactic.TripleEquals.*
 import org.scalatest.flatspec.*
-
-import scala.collection.SeqView.Sorted
 
 import StdInScannerTestingExt.*
 
 class StdInScannerSpec extends AnyFlatSpec {
-  "StdInScanner.of" should "emit applied value" in {
-    val scanner = StdInScanner.of(true)
+  "StdInScanner.pure" should "emit applied value" in {
+    val scanner = StdInScanner.pure(true)
     val res = scanner.run
     assert(res == true)
   }
@@ -112,28 +108,28 @@ class StdInScannerSpec extends AnyFlatSpec {
     assert(res == Vector(2, 3, 5, 7, 11, 13, 17, 19))
   }
 
-  "readLinesAs[Vector, String]" should "read N lines as Vector" in {
+  "readLinesAs[Vector[String]]" should "read N lines as Vector of Strings" in {
     val in = "hoge\nfuga\npoyo\npiyo"
     val n = 4
-    val res = StdInScanner.readLinesAs[Vector, String](n).runOnString(in)
+    val res = StdInScanner.readLinesAs[Vector[String]](n).runOnString(in)
 
     assert(res.length == n)
     assert(res == Vector("hoge", "fuga", "poyo", "piyo"))
   }
 
-  "readLinesAs[Vector, Int]" should "read N lines of ints as Vector" in {
+  "readLinesAs[Vector[Int]]" should "read N lines as Vector of Ints" in {
     val in = "1\n1\n2\n3\n5\n8\n13\n21"
     val n = 8
-    val res = StdInScanner.readLinesAs[Vector, Int](n).runOnString(in)
+    val res = StdInScanner.readLinesAs[Vector[Int]](n).runOnString(in)
 
     assert(res.length == n)
     assert(res == Vector(1, 1, 2, 3, 5, 8, 13, 21))
   }
 
-  "readLinesAs[Vector, (String, Int)]" should "read N lines of pair as Vector" in {
+  "readLinesAs[Vector[(String, Int)]]" should "read N lines as Vector of pairs" in {
     val in = "a 1\nb 2\nc 3\nd 4"
     val n = 4
-    val res = StdInScanner.readLinesAs[Vector, (String, Int)](n).runOnString(in)
+    val res = StdInScanner.readLinesAs[Vector[(String, Int)]](n).runOnString(in)
 
     assert(res.length == n)
     assert(
@@ -146,42 +142,42 @@ class StdInScannerSpec extends AnyFlatSpec {
     )
   }
 
-  "readLinesAsArray[String]" should "read N lines as Array" in {
+  "readLinesAs[Array[String]]" should "read N lines as Array of strings" in {
     val in = "hoge\nfuga\npoyo\npiyo"
     val n = 4
-    val res = StdInScanner.readLinesAsArray[String](n).runOnString(in)
+    val res = StdInScanner.readLinesAs[Array[String]](n).runOnString(in)
 
     assert(res.length == n)
     assert(res === Array("hoge", "fuga", "poyo", "piyo"))
   }
 
-  "readLinesAsSorted[SortedSet, Int]" should "read N lines as SortedSet of ints" in {
+  "readLinesAs[SortedSet[Int]]" should "read N lines as SortedSet of ints" in {
     import scala.collection.immutable.SortedSet
 
     val in = "3\n4\n1\n2\n4\n3"
     val n = 6
-    val res = StdInScanner.readLinesAsSorted[SortedSet, Int](n).runOnString(in)
+    val res = StdInScanner.readLinesAs[SortedSet[Int]](n).runOnString(in)
 
     assert(res == SortedSet(3, 4, 1, 2))
     assert((res.iterator zip List(1, 2, 3, 4)).forall(_ == _))
   }
 
-  "readLinesAsSorted[PriorityQueue, Int]" should "read N lines as PriorityQueue of ints" in {
+  "readLinesAs[PriorityQueue[Int]]" should "read N lines as PriorityQueue of ints" in {
     import scala.collection.mutable.PriorityQueue
 
     val in = "3\n4\n1\n2"
     val n = 4
     val res =
-      StdInScanner.readLinesAsSorted[PriorityQueue, Int](n).runOnString(in)
+      StdInScanner.readLinesAs[PriorityQueue[Int]](n).runOnString(in)
 
     // dequeue() / dequeueAll() returns element that has highest priority first.
     assert((res.dequeueAll zip List(4, 3, 2, 1)).forall(_ == _))
   }
 
-  "readLinesAsMap" should "read N lines as map contains key-value pairs parsed from each line" in {
+  "readLinesAs[Map[String, Int]]" should "read N lines as map contains key-value pairs parsed from each line" in {
     val in = "a 1\nb 2\nc 3\nd 4"
     val n = 4
-    val res = StdInScanner.readLinesAsMap[Map, String, Int](n).runOnString(in)
+    val res = StdInScanner.readLinesAs[Map[String, Int]](n).runOnString(in)
 
     assert(
       res == Map(
@@ -193,13 +189,13 @@ class StdInScannerSpec extends AnyFlatSpec {
     )
   }
 
-  "readLinesAsSortedMap" should "read N lines as sorted map contains key-value pairs parsed from each line" in {
+  "readLinesAs[SortedMap[String, Int]]" should "read N lines as sorted map contains key-value pairs parsed from each line" in {
     import scala.collection.immutable.SortedMap
 
     val in = "c 1\nd 2\na 3\nb 4"
     val n = 4
     val res = StdInScanner
-      .readLinesAsSortedMap[SortedMap, String, Int](n)
+      .readLinesAs[SortedMap[String, Int]](n)
       .runOnString(in)
 
     assert(
@@ -210,6 +206,7 @@ class StdInScannerSpec extends AnyFlatSpec {
         "b" -> 4
       )
     )
+
     assert((res.keysIterator zip List("a", "b", "c", "d")).forall(_ == _))
   }
 
@@ -246,26 +243,30 @@ class StdInScannerSpec extends AnyFlatSpec {
 
   "StdInScanner" should "be composable in for-comprehensions" in {
     import StdInScanner._
+    import scala.collection.immutable.BitSet
 
     val in = """
     |2 3
     |100
     |200
-    |1 2
-    |3 4
-    |5 6
+    |A true
+    |B true
+    |C false
+    |3 2 1 3 2 3
     """.trim.stripMargin
 
     val scanner = for {
-      c <- StdInScanner.of(100)
+      p <- pure(100)
       (m, n) <- readLineAs[(Int, Int)]
-      a <- readLinesAs[Vector, Int](m)
-      b <- readLinesAs[Vector, (Int, Int)](n)
-    } yield (a, b, c)
-    val (resA, resB, resC) = scanner.runOnString(in)
+      v <- readLinesAs[Vector[Int]](m)
+      m <- readLinesAs[Map[String, Boolean]](n)
+      s <- readLineAs[BitSet]
+    } yield (p, v, m, s)
+    val (resP, resV, resM, resS) = scanner.runOnString(in)
 
-    assert(resA == Vector(100, 200))
-    assert(resB == Vector((1, 2), (3, 4), (5, 6)))
-    assert(resC == 100)
+    assert(resP == 100)
+    assert(resV == Vector(100, 200))
+    assert(resM == Map("A" -> true, "B" -> true, "C" -> false))
+    assert(resS == BitSet(1, 2, 3))
   }
 }
